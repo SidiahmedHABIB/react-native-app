@@ -12,6 +12,8 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { apiPost } from "./helper/api_manager";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
 
 const GenerateResumeScreen = () => {
   // State Management
@@ -150,7 +152,172 @@ const GenerateResumeScreen = () => {
       )}
     </View>
   );
+  const downloadResume = async () => {
+    if (!generatedResume) return;
 
+    const html = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+              color: #333;
+              padding: 20px;
+            }
+            .header {
+              font-size: 28px;
+              font-weight: bold;
+              color: #555;
+              margin-bottom: 20px;
+              text-align: center;
+            }
+            .section {
+              margin-bottom: 20px;
+            }
+            .title {
+              font-size: 22px;
+              font-weight: bold;
+              color: #696969;
+              margin-bottom: 10px;
+              border-bottom: 2px solid #696969;
+              padding-bottom: 5px;
+            }
+            .text {
+              margin-bottom: 5px;
+              line-height: 1.5;
+            }
+            .highlight {
+              color: #696969;
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">${generatedResume.fname} ${
+      generatedResume.lname
+    }</div>
+  
+          <!-- Contact Information -->
+          <div class="section">
+            <div class="title">Contact Information</div>
+            <div class="text">Email: <span class="highlight">${
+              generatedResume.contact.email
+            }</span></div>
+            <div class="text">Phone: <span class="highlight">${
+              generatedResume.contact.phone
+            }</span></div>
+            <div class="text">Location: <span class="highlight">${
+              generatedResume.contact.location
+            }</span></div>
+            ${
+              generatedResume.contact.linkedin
+                ? `<div class="text">LinkedIn: <a href="${generatedResume.contact.linkedin}" target="_blank">${generatedResume.contact.linkedin}</a></div>`
+                : ""
+            }
+            ${
+              generatedResume.contact.github
+                ? `<div class="text">GitHub: <a href="${generatedResume.contact.github}" target="_blank">${generatedResume.contact.github}</a></div>`
+                : ""
+            }
+          </div>
+  
+          <!-- Profile -->
+          <div class="section">
+            <div class="title">Profile</div>
+            <div class="text"><span class="highlight">${
+              generatedResume.profile.title
+            }</span></div>
+            <div class="text">${generatedResume.profile.description}</div>
+          </div>
+  
+          <!-- Education -->
+          <div class="section">
+            <div class="title">Education</div>
+            ${generatedResume.education
+              .map(
+                (edu) => `
+              <div class="text">
+                <span class="highlight">${edu.degree}</span> in ${edu.major}<br>
+                ${edu.university}, ${edu.location}<br>
+                ${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}<br>
+                Relevant Courses: ${edu.relevantCourses.join(", ")}
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+  
+          <!-- Experience -->
+          <div class="section">
+            <div class="title">Experience</div>
+            ${generatedResume.experience
+              .map(
+                (exp) => `
+              <div class="text">
+                <span class="highlight">${exp.title}</span> at ${
+                  exp.company
+                } (${exp.location})<br>
+                ${formatDate(exp.startDate)} - ${formatDate(exp.endDate)}<br>
+                ${exp.description}<br>
+                Skills: ${exp.skills.join(", ")}
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+  
+          <!-- Projects -->
+          <div class="section">
+            <div class="title">Projects</div>
+            ${generatedResume.projects
+              .map(
+                (proj) => `
+              <div class="text">
+                <span class="highlight">${proj.title}</span><br>
+                ${proj.description}<br>
+                Technologies: ${proj.technologies.join(", ")}
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+  
+          <!-- Skills -->
+          <div class="section">
+            <div class="title">Skills</div>
+            <div class="text">Technical: ${generatedResume.skills.technical.join(
+              ", "
+            )}</div>
+            <div class="text">Tools: ${generatedResume.skills.tools.join(
+              ", "
+            )}</div>
+            <div class="text">Others: ${generatedResume.skills.others.join(
+              ", "
+            )}</div>
+          </div>
+  
+          <!-- Languages -->
+          <div class="section">
+            <div class="title">Languages</div>
+            <div class="text">${generatedResume.languages.join(", ")}</div>
+          </div>
+  
+          <!-- Interests -->
+          <div class="section">
+            <div class="title">Interests</div>
+            <div class="text">${generatedResume.interests.join(", ")}</div>
+          </div>
+        </body>
+      </html>`;
+
+    try {
+      const { uri } = await Print.printToFileAsync({ html });
+      await Sharing.shareAsync(uri);
+    } catch (error) {
+      console.error("Error generating or sharing PDF", error);
+    }
+  };
   // Render Method
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -298,6 +465,9 @@ const GenerateResumeScreen = () => {
               )}
 
             {/* Clear Button */}
+            <TouchableOpacity style={styles.button} onPress={downloadResume}>
+              <Text style={styles.buttonText}>Download</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.clearButton} onPress={clearResume}>
               <Text style={styles.clearButtonText}>Clear</Text>
             </TouchableOpacity>

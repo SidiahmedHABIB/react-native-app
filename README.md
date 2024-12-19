@@ -35,6 +35,44 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
+## Package dependencies
+
+This project includes the following key dependencies:
+
+### Core Dependencies
+- **expo**: ~52.0.11
+- **react**: 18.3.1
+- **react-native**: 0.76.3
+- **expo-router**: ~4.0.9
+
+### Navigation
+- **@react-navigation/native**: ^7.0.8
+- **@react-navigation/bottom-tabs**: ^7.0.0
+- **@react-navigation/drawer**: ^7.0.13
+- **@react-navigation/native-stack**: ^7.1.9
+
+### UI Components
+- **@expo/vector-icons**: ^14.0.2
+- **react-native-paper**: ^5.12.5
+- **react-native-vector-icons**: ^10.2.0
+
+### Forms and Validation
+- **react-hook-form**: ^7.54.0
+- **@hookform/resolvers**: ^3.9.1
+- **yup**: ^1.5.0
+
+### Utilities
+- **axios**: ^1.7.9
+- **expo-location**: ~18.0.4
+- **expo-camera**: ~16.0.7
+- **expo-web-browser**: ~14.0.1
+
+### Testing
+- **jest**: ^29.2.1
+- **jest-expo**: ~52.0.2
+
+For a full list of dependencies, check the `package.json` file.
+
 ## Learn more
 
 To learn more about developing your project with Expo, look at the following resources:
@@ -48,3 +86,4 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+

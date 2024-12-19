@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.1.13:8088/api/v1";
+const baseUrl = "http://20.3.248.15:8088/api/v1";
 
 export const apiPost = async <T>(url: string, body: object): Promise<T> => {
   try {
